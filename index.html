@@ -3,7 +3,11 @@
 	<head>
     		<script src="phaser.min.js"></script>
     		<style>
-    			body{margin:0}
+    			body{margin-top:100px;
+                    margin-bottom:100px;
+                    margin-left:320px;
+        }
+             
     		</style>
     		<script type="text/javascript">
 			window.onload = function() {
@@ -23,6 +27,7 @@
 				var rightKey;
                 var cursors;
                 var mouse;
+                
 				// colors to tint tiles according to their value
 				var colors = {
 				    2:0xFFFFFF,
@@ -42,6 +47,14 @@
 					32768:0xFF1111,
 					65536:0xFF0000
 				}
+                
+                
+               var Dot = function (game, x, y, color) {
+                   //dot constructor
+                Phaser.Sprite.call(this, game, x, y, 'dot');
+                 this.color = color;  
+                                
+               }
 				// at the beginning of the game, the player cannot move
                     var canMove=false;
 					
@@ -50,12 +63,17 @@
 					// preload the only image we are using in the game
 					game.load.image("tile", "tile.png");
                     game.load.image("banana", "banana.jpg");
+                    game.load.image("red","red.png");
+                    game.load.image("green","green.png");
+                    game.load.image("gold","gold.png");
+                    game.load.image("background","background.png");
 				}
 				
 				// THE GAME HAS BEEN CREATED
 				function onCreate() {
 					
                     //this will create up,right,left,down
+                    game.add.sprite(0,0,"background");
                     cursors = game.input.keyboard.createCursorKeys();
                     cursors.up.onDown.add(moveUp,this);
                     cursors.right.onDown.add(moveRight,this);
@@ -86,7 +104,11 @@
                 function createGrid() {
                     for (var i = 0; i < rows*tileSize; i+= tileSize) {
                      for (var j = 0; j < rows*tileSize; j+= tileSize) {
-                         var tile = game.add.sprite(i,j,"tile");
+                        // var tile = game.add.sprite(i,j,"tile");
+                         var rand = Math.random();
+                         if (rand < 0.33) var tile = tileSprites.create(i,j,"red");
+                         else if (rand < 0.66 && rand > 0.33) var tile = tileSprites.create(i,j,"green");
+                         else var tile = tileSprites.create(i,j,"gold");
                          tile.inputEnabled = true;
                          tile.events.onInputDown.add(listener, this);
                                   
@@ -96,8 +118,9 @@
                     canMove = true;    
                 }
                 
-                function listener() {
-                 game.add.sprite(0,0, "banana");   
+                function listener(sprite) {
+                //game.add.sprite(0,0, "banana"); 
+                sprite.kill();
                     
                 }
                 
